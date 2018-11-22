@@ -1,26 +1,42 @@
 clc;clear;close all;
 ASNR = 2;
-N = 100;
+N = 200;
 rng default;
 
-X = rand(N,1);
-Y = rand(N,1);
-C = mean([X,Y]);
-I_star = rand(N,1)*15;
+X = rand(1,N);
+Y = rand(1,N);
+I = rand(1,N)*15;
+P = [X;Y];
+C = mean(P,2);
+D = P - repmat(C,[1,N]);
+D = vecnorm(D).*D.*I;
+V = sum(D,2);
 
-Ns = normrnd(0,1,N,1);
 
-i_star = I_star + N;
+n = normrnd(0,1,1,N);
+
+I_t = I + n;
 
 theta = rand(1,1)*pi/2;
 
+fprintf('theta = %.3f\n',theta/pi*180);
+
 R = [cos(theta),-sin(theta);sin(theta),cos(theta)];
 
-P = R*[X';Y'];
+P_t = R*[X;Y];
 
-x = P(1,:)';
-y = P(2,:)';
-c = mean([x,y]);
+X_t = P_t(1,:);
+Y_t = P_t(2,:);
+C_t = mean(P_t,2);
+D_t = P_t - repmat(C_t,[1,N]);
+
+D_t = vecnorm(D_t).*D_t.*I_t;
+V_t = sum(D_t,2);
+
+rot = acos((V_t'*V)./norm(V_t)./norm(V))/pi*180;
+
+fprintf('alpha = %.3f\n',rot);
+
 
 
 
